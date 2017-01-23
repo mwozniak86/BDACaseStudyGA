@@ -22,9 +22,13 @@ jesus.martin.calvo@gmail.com
  
 First, let's take a look at the first 1000 rows of data
 
-```{r, echo=FALSE, message=FALSE, prompt=FALSE, results='asis'}
-t1 <- gvisTable(gadata[1:1000,],options = list(showRowNumber = FALSE, width = 800, height = min(400,27*(nrow(gadata) + 1)), allowHTML = TRUE, page = 'disable'))
-print(t1,'chart')
+
+```
+## Error in eval(expr, envir, enclos): could not find function "gvisTable"
+```
+
+```
+## Error in print(t1, "chart"): object 't1' not found
 ```
 
 It is very important that you understand each of the columns, let's review its content 
@@ -52,21 +56,25 @@ From these columns we can have some derived metrics, for example:
 
 For example, we can visualize the seasonality of the visits per month, measured by the number of entrances
 
-```{r, echo=FALSE, message=FALSE, prompt=FALSE, results='asis'}
-entrpmonth <-  group_by(gadata, month) %>% summarise(entrances = sum(entrances))
 
-ggplot(entrpmonth, aes(x = month,y = entrances)) + geom_line() +
-  scale_x_discrete(breaks = seq(1:12))
-  
+```
+## Error in eval(expr, envir, enclos): could not find function "%>%"
+```
+
+```
+## Error in eval(expr, envir, enclos): could not find function "ggplot"
 ```
 
 
 And its evolution year by year
 
-```{r, echo=FALSE, message=FALSE, prompt=FALSE, results='asis'}
-entrpyear <-  group_by(gadata, year) %>% summarise(entrances = sum(entrances))
-ggplot(entrpyear,aes(x = year, y = entrances)) + geom_bar(stat="identity", fill = "lightblue", colour = "black")
-  
+
+```
+## Error in eval(expr, envir, enclos): could not find function "%>%"
+```
+
+```
+## Error in eval(expr, envir, enclos): could not find function "ggplot"
 ```
 
 ## Questions to solve
@@ -75,35 +83,21 @@ In this case study, you will have to answer five questions which will help the w
 
 1. What are the pages with more visits? Are them the same when medium is not 'cpc'? Can you make a recommendation on the most popular pages?
 
-The ranking of the most visited pages changed after removing sponsored pages (e.g. /aplicaciones-programas-gratuito-todas-necesidades-lista-software-libre/ or /404.html (error page?)) which does not come as a big surprise. See below.
 
-```{r, echo=TRUE, eval=TRUE}
-pageVisits <-  group_by(gadata, pagePath) %>% summarise(entrances = sum(entrances))
-sorted_rows <- sort(pageVisits$entrances, decreasing = TRUE, index.return = TRUE)
-pageVisits <- pageVisits[sorted_rows$ix, ]
-
-top_ten <- head(pageVisits, n = 10)
-
-# ggplot(top_ten,aes(x = pagePath, y = entrances)) + geom_bar(stat="identity", fill = "orange", colour = "black")
+```
+## Error in eval(expr, envir, enclos): could not find function "%>%"
 ```
 
-```{r, echo=TRUE, eval=TRUE}
-grid.table(top_ten)
+```
+## Error in sort(pageVisits, decreasing = TRUE, index.return = TRUE): object 'pageVisits' not found
 ```
 
-```{r, echo=TRUE, eval=TRUE}
-fdata <- gadata[which(gadata$Medium != "cpc"), ]
-pageVisits <-  group_by(fdata, pagePath) %>% summarise(entrances = sum(entrances))
-sorted_rows <- sort(pageVisits$entrances, decreasing = TRUE, index.return = TRUE)
-pageVisits <- pageVisits[sorted_rows$ix, ]
-
-top_ten_wocpc <- head(pageVisits, n = 10)
-
-# ggplot(top_ten_wocpc,aes(x = pagePath, y = entrances)) + geom_bar(stat="identity", fill = "orange", colour = "black")
+```
+## Error in eval(expr, envir, enclos): object 'pageVisits' not found
 ```
 
-```{r, echo=TRUE, eval=TRUE}
-grid.table(top_ten_wocpc)
+```
+## Error in head(pageVisits, n = 10): object 'pageVisits' not found
 ```
 
 2. What are the exit rates for the pages with the most number of exits? How would you change the content of the page to reduce exit rate? 

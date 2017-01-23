@@ -52,10 +52,10 @@ report_file = "GAReport"
 # Step 4: Click "Credentials" and then "Create a new Client ID"
 # Step 4: Select "Installed Application" and "Other" and click in "Create Client ID"
 # Step 5: Run the following code with the information that is displayed in the fields {}:
- client.id <- "{copy paste your Client ID here}"
- client.secret <- "{copy paste your Client secret here}"
- token <- Auth(client.id,client.secret)
- ValidateToken(token)
+ # client.id <- "{copy paste your Client ID here}"
+ # client.secret <- "{copy paste your Client secret here}"
+ # token <- Auth(client.id,client.secret)
+ # ValidateToken(token)
 # Give permissions to your application to access your GA data
 # You must see in your RStudio console "Authentication complete."
 # If you need help, type "?Auth" (no quotes) in the RStudio console
@@ -82,10 +82,11 @@ if (!exists("gadata"))
   gadata <- within(read.csv(paste(local_directory,"data/GACaseStudyData.csv", sep="/")),rm("X"))
 
 # Make sure ga.data contains the data you want
-#str(gadata)
-#head(gadata)
+str(gadata)
+head(gadata)
 # Now you have your data completely clean to analyze and visualize.
 # 
 # Create the report
 source(paste(local_directory,"R/runcode.R", sep = "/"))
 # 
+
