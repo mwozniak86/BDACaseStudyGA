@@ -187,7 +187,6 @@ for (i in idx) {
 
 z <- as.data.frame(x=output)
 
-#rownames(z) <- z[, 1]
 ```
 
 ```{r, echo=FALSE, message=FALSE, prompt=FALSE, results='asis'}
@@ -197,5 +196,38 @@ print(t1,'chart')
 
 5) When medium is referral, which are the sources that attracted the highest number of pageviews? Based on this, should the author promote the content in any of these websites? Would it be better to invest in visitors coming from the medium 'cpc'?
 
-**Work in progress**
+Breakdown of visitors based on Medium (referral vs. cpc)
 
+```{r, echo=TRUE, eval=TRUE}
+pageSources <-  group_by(gadata, Medium, source) %>% summarise(pageviews = sum(pageviews))
+sorted_rows <- sort(pageSources$pageviews, decreasing = TRUE, index.return = TRUE)
+pageSources <- pageSources[sorted_rows$ix, ]
+
+top <- head(pageSources, n = 40)
+
+top_ref <- top[which(top$Medium == "referral"),]
+
+top_ref_cpc <- top[which(top$Medium == "referral" | top$Medium == "cpc"),]
+
+```
+
+```{r, echo=FALSE, message=FALSE, prompt=FALSE, results='asis'}
+t1 <- gvisTable(top_ref,options = list(showRowNumber = FALSE, width = 800, height = min(400,27*(nrow(top_ref) + 1)), allowHTML = TRUE, page = 'disable'))
+print(t1,'chart')
+```
+
+As seen below, cpc generates more views than referral (and other mediums) so it makes sense to invest in cpc. However, referral are typcially free of charge whereas cpc are paid. In this case it is still probably better to do both to strike a right balance between those two mediums.
+
+```{r, echo=TRUE, eval=TRUE}
+pageSources <-  group_by(gadata, Medium) %>% summarise(pageviews = sum(pageviews))
+sorted_rows <- sort(pageSources$pageviews, decreasing = TRUE, index.return = TRUE)
+pageSources <- pageSources[sorted_rows$ix, ]
+
+top_ref_cpc <- head(pageSources, n = 40)
+
+```
+
+```{r, echo=FALSE, message=FALSE, prompt=FALSE, results='asis'}
+t1 <- gvisTable(top_ref_cpc,options = list(showRowNumber = FALSE, width = 800, height = min(400,27*(nrow(top_ref_cpc) + 1)), allowHTML = TRUE, page = 'disable'))
+print(t1,'chart')
+```

@@ -81,29 +81,399 @@ And its evolution year by year
 
 In this case study, you will have to answer five questions which will help the website to improve the content that is creating. You will need to modify and visualize the data. For these purposes, you can use the package "dplyr" (get more info with browseVignettes(package = "dplyr") and the package "ggplot2" (get more info with ?ggplot or ?qplot)
 
-1. What are the pages with more visits? Are them the same when medium is not 'cpc'? Can you make a recommendation on the most popular pages?
+1) What are the pages with more visits? Are them the same when medium is not 'cpc'? Can you make a recommendation on the most popular pages?
 
+The ranking of the most visited pages changed after removing sponsored pages (e.g. /aplicaciones-programas-gratuito-todas-necesidades-lista-software-libre/ or /404.html (error page?)) which does not come as a big surprise. See below.
+
+
+```r
+pageVisits <-  group_by(gadata, pagePath) %>% summarise(entrances = sum(entrances))
+```
 
 ```
 ## Error in eval(expr, envir, enclos): could not find function "%>%"
 ```
 
+```r
+sorted_rows <- sort(pageVisits$entrances, decreasing = TRUE, index.return = TRUE)
 ```
-## Error in sort(pageVisits, decreasing = TRUE, index.return = TRUE): object 'pageVisits' not found
+
+```
+## Error in sort(pageVisits$entrances, decreasing = TRUE, index.return = TRUE): object 'pageVisits' not found
+```
+
+```r
+pageVisits <- pageVisits[sorted_rows$ix, ]
 ```
 
 ```
 ## Error in eval(expr, envir, enclos): object 'pageVisits' not found
 ```
 
+```r
+top_ten <- head(pageVisits, n = 10)
+```
+
 ```
 ## Error in head(pageVisits, n = 10): object 'pageVisits' not found
 ```
 
-2. What are the exit rates for the pages with the most number of exits? How would you change the content of the page to reduce exit rate? 
+```r
+# ggplot(top_ten,aes(x = pagePath, y = entrances)) + geom_bar(stat="identity", fill = "orange", colour = "black")
+```
 
-3. What are the pages with the highest average time on page? Would you recommend the author to write more on these topics?
 
-3. What combinations of sources and mediums attract the more amount of new visitors? Is their exit rate different to the existing visitors?
+```
+## Error in eval(expr, envir, enclos): could not find function "gvisTable"
+```
 
-4. When medium is referral, which are the sources that attracted the highest number of pageviews? Based on this, should the author promote the content in any of these websites? Would it be better to invest in visitors coming from the medium 'cpc'?
+```
+## Error in print(t1, "chart"): object 't1' not found
+```
+
+
+```r
+fdata <- gadata[which(gadata$Medium != "cpc"), ]
+```
+
+```
+## Error in eval(expr, envir, enclos): object 'gadata' not found
+```
+
+```r
+pageVisits <-  group_by(fdata, pagePath) %>% summarise(entrances = sum(entrances))
+```
+
+```
+## Error in eval(expr, envir, enclos): could not find function "%>%"
+```
+
+```r
+sorted_rows <- sort(pageVisits$entrances, decreasing = TRUE, index.return = TRUE)
+```
+
+```
+## Error in sort(pageVisits$entrances, decreasing = TRUE, index.return = TRUE): object 'pageVisits' not found
+```
+
+```r
+pageVisits <- pageVisits[sorted_rows$ix, ]
+```
+
+```
+## Error in eval(expr, envir, enclos): object 'pageVisits' not found
+```
+
+```r
+top_ten_wocpc <- head(pageVisits, n = 10)
+```
+
+```
+## Error in head(pageVisits, n = 10): object 'pageVisits' not found
+```
+
+```r
+# ggplot(top_ten_wocpc,aes(x = pagePath, y = entrances)) + geom_bar(stat="identity", fill = "orange", colour = "black")
+```
+
+
+```
+## Error in eval(expr, envir, enclos): could not find function "gvisTable"
+```
+
+```
+## Error in print(t1, "chart"): object 't1' not found
+```
+
+2) What are the exit rates for the pages with the most number of exits? How would you change the content of the page to reduce exit rate? 
+
+
+```r
+pageExits <-  group_by(gadata, pagePath) %>% summarise(exits = sum(exits), pageviews = sum(pageviews))
+```
+
+```
+## Error in eval(expr, envir, enclos): could not find function "%>%"
+```
+
+```r
+sorted_rows <- sort(pageExits$exits, decreasing = TRUE, index.return = TRUE)
+```
+
+```
+## Error in sort(pageExits$exits, decreasing = TRUE, index.return = TRUE): object 'pageExits' not found
+```
+
+```r
+pageExits <- pageExits[sorted_rows$ix, ]
+```
+
+```
+## Error in eval(expr, envir, enclos): object 'pageExits' not found
+```
+
+```r
+#Exit rate= exits/pageviews
+pageExits[, "exitrate"] <- pageExits$exits / pageExits$pageviews
+```
+
+```
+## Error in eval(expr, envir, enclos): object 'pageExits' not found
+```
+
+```r
+top_ten <- head(pageExits, n = 10)
+```
+
+```
+## Error in head(pageExits, n = 10): object 'pageExits' not found
+```
+
+```r
+top_ten <- top_ten[,c(1,3)]
+```
+
+```
+## Error in eval(expr, envir, enclos): object 'top_ten' not found
+```
+
+
+```
+## Error in eval(expr, envir, enclos): could not find function "gvisTable"
+```
+
+```
+## Error in print(t1, "chart"): object 't1' not found
+```
+
+To reduce exit rates of given page one would need to minimize number of exits, i.e. refer user to other page within the same domain.
+
+3) What are the pages with the highest average time on page? Would you recommend the author to write more on these topics?
+
+
+```r
+pageAvg <-  group_by(gadata, pagePath) %>% summarise(exits = sum(exits), pageviews = sum(pageviews), timeOnPage = sum(timeOnPage))
+```
+
+```
+## Error in eval(expr, envir, enclos): could not find function "%>%"
+```
+
+```r
+#Average time on page = timeOnPage/(pageviews-exits)
+pageAvg[, "avgtimeonpage"] <- round((pageAvg$timeOnPage / (pageAvg$pageviews - pageAvg$exits)),3)
+```
+
+```
+## Error in eval(expr, envir, enclos): object 'pageAvg' not found
+```
+
+```r
+pageAvg <- pageAvg[,c(1,5)]
+```
+
+```
+## Error in eval(expr, envir, enclos): object 'pageAvg' not found
+```
+
+```r
+idx <- order(pageAvg$avgtimeonpage, decreasing = TRUE)
+```
+
+```
+## Error in order(pageAvg$avgtimeonpage, decreasing = TRUE): object 'pageAvg' not found
+```
+
+```r
+pageAvg <- pageAvg[idx, ]
+```
+
+```
+## Error in eval(expr, envir, enclos): object 'pageAvg' not found
+```
+
+```r
+top_ten <- head(pageAvg, n = 10)
+```
+
+```
+## Error in head(pageAvg, n = 10): object 'pageAvg' not found
+```
+
+
+```
+## Error in eval(expr, envir, enclos): could not find function "gvisTable"
+```
+
+```
+## Error in print(t1, "chart"): object 't1' not found
+```
+
+4) What combinations of sources and mediums attract the more amount of new visitors? Is their exit rate different to the existing visitors?
+
+
+
+```r
+fdata <- gadata[which(gadata$userType == "New Visitor"), ]
+```
+
+```
+## Error in eval(expr, envir, enclos): object 'gadata' not found
+```
+
+```r
+mediums <- unique(fdata[,"Medium"])
+```
+
+```
+## Error in unique(fdata[, "Medium"]): object 'fdata' not found
+```
+
+```r
+sources <- unique(fdata[, "source"])
+```
+
+```
+## Error in unique(fdata[, "source"]): object 'fdata' not found
+```
+
+```r
+x <- matrix(nrow = length(mediums), ncol = length(sources))
+```
+
+```
+## Error in matrix(nrow = length(mediums), ncol = length(sources)): object 'mediums' not found
+```
+
+```r
+rownames(x) <- mediums
+```
+
+```
+## Error in eval(expr, envir, enclos): object 'mediums' not found
+```
+
+```r
+colnames(x) <- sources
+```
+
+```
+## Error in eval(expr, envir, enclos): object 'sources' not found
+```
+
+```r
+for (m in mediums) {
+  for (s in sources) {
+      x[m,s] <- length(which(fdata$Medium == m & fdata$source == s))
+  }
+}
+```
+
+```
+## Error in eval(expr, envir, enclos): object 'mediums' not found
+```
+
+```r
+x <- t(x)
+```
+
+```
+## Error in t(x): object 'x' not found
+```
+
+```r
+#print(x)
+
+idx <- order(x[,], decreasing = TRUE)
+```
+
+```
+## Error in order(x[, ], decreasing = TRUE): object 'x' not found
+```
+
+```r
+output <- matrix(nrow=10, ncol=2)
+j <- 0
+for (i in idx) {
+  j <- j + 1
+  a <- floor (i / length(sources)) +1
+  b <- i %% length(sources)
+  output[j,1] <- paste(mediums[a], sources[b], sep = "-")
+  output[j,2] <- (x[b,a])
+  if (j >= 10) {
+    break
+  }
+}
+```
+
+```
+## Error in eval(expr, envir, enclos): object 'idx' not found
+```
+
+```r
+z <- as.data.frame(x=output)
+```
+
+
+```
+## Error in eval(expr, envir, enclos): could not find function "gvisTable"
+```
+
+```
+## Error in print(t1, "chart"): object 't1' not found
+```
+
+5) When medium is referral, which are the sources that attracted the highest number of pageviews? Based on this, should the author promote the content in any of these websites? Would it be better to invest in visitors coming from the medium 'cpc'?
+
+Breakdown of visitors based on Medium (referral vs. cpc)
+
+
+```r
+pageSources <-  group_by(gadata, Medium, source) %>% summarise(pageviews = sum(pageviews))
+```
+
+```
+## Error in eval(expr, envir, enclos): could not find function "%>%"
+```
+
+```r
+sorted_rows <- sort(pageSources$pageviews, decreasing = TRUE, index.return = TRUE)
+```
+
+```
+## Error in sort(pageSources$pageviews, decreasing = TRUE, index.return = TRUE): object 'pageSources' not found
+```
+
+```r
+pageSources <- pageSources[sorted_rows$ix, ]
+```
+
+```
+## Error in eval(expr, envir, enclos): object 'pageSources' not found
+```
+
+```r
+top <- head(pageSources, n = 40)
+```
+
+```
+## Error in head(pageSources, n = 40): object 'pageSources' not found
+```
+
+```r
+top <- (top[which(top$Medium == "referral"),])
+```
+
+```
+## Error in eval(expr, envir, enclos): object 'top' not found
+```
+
+
+```
+## Error in eval(expr, envir, enclos): could not find function "gvisTable"
+```
+
+```
+## Error in print(t1, "chart"): object 't1' not found
+```
+
